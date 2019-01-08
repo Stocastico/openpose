@@ -420,6 +420,8 @@ if (UNIX OR APPLE)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
   endif (WITH_3D_ADAM_MODEL)
 
+  set(GPU_MODE "CPU_ONLY")
+
   # OpenMP
   if (${GPU_MODE} MATCHES "CPU_ONLY")
     find_package(OpenMP)

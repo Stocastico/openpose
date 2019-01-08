@@ -153,9 +153,9 @@ namespace op
                 for (auto i = 0u ; i < mImageDirectoryStereo ; i++)
                     cvMats.emplace_back(
                         cv::Mat(cvMatConcatenated,
-                                cv::Rect{(int)(i*individualWidth), 0,
-                                         (int)individualWidth,
-                                         (int)cvMatConcatenated.rows}));
+                                cv::Rect{static_cast<int>(i*individualWidth), 0,
+                                         static_cast<int>(individualWidth),
+                                         static_cast<int>(cvMatConcatenated.rows)}));
             }
             // Sanity check
             else if (cvMats.size() != 1 && mImageDirectoryStereo > 1)
