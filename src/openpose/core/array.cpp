@@ -1,5 +1,6 @@
 #include <typeinfo> // typeid
 #include <numeric> // std::accumulate
+#include <openpose/utilities/avx.hpp>
 #include <openpose/utilities/errorAndLog.hpp>
 #include <openpose/core/array.hpp>
 
@@ -633,12 +634,20 @@ namespace op
             {
                 // New size & volume
                 mSize = sizes;
-                mVolume = {std::accumulate(sizes.begin(), sizes.end(), 1ull, std::multiplies<size_t>())};
+                mVolume = {std::accumulate(sizes.begin(), sizes.end(), std::size_t(1), std::multiplies<size_t>())};
                 // Prepare shared_ptr
                 if (dataPtr == nullptr)
                 {
-                    spData.reset(new T[mVolume], std::default_delete<T[]>());
+                    #ifdef WITH_AVX
+                        spData = aligned_shared_ptr<T>(mVolume);
+                    #else
+                        spData.reset(new T[mVolume], std::default_delete<T[]>());
+                    #endif
                     pData = spData.get();
+                    // Sanity check
+                    if (pData == nullptr)
+                        error("Shared pointer could not be allocated for Array data storage.",
+                              __LINE__, __FUNCTION__, __FILE__);
                 }
                 else
                 {

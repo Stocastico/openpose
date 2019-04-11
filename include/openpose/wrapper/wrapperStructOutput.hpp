@@ -51,9 +51,11 @@ namespace op
         std::string writeCocoJson;
 
         /**
-         * Analogous to writeCocoJson but for foot keypoints.
+         * It selects the COCO variants for cocoJsonSaver.
+         * Add 1 for body, add 2 for foot, 4 for face, and/or 8 for hands. Use 0 to use all the possible candidates.
+         * E.g., 7 would mean body+foot+face COCO JSON..
          */
-        std::string writeCocoFootJson;
+        int writeCocoJsonVariants;
 
         /**
          * Experimental option (only makes effect on car JSON generation).
@@ -83,6 +85,20 @@ namespace op
         std::string writeVideo;
 
         /**
+         * Frame rate of the recorded video.
+         * By default (-1.), it will try to get the input frames producer frame rate (e.g., input video or webcam frame
+         * rate). If the input frames producer does not have a set FPS (e.g., image_dir or webcam if OpenCV not
+         * compiled with its support), set this value accordingly (e.g., to the frame rate displayed by the OpenPose
+         * GUI).
+         */
+        double writeVideoFps;
+
+        /**
+         * Whether to save the output video with audio. The input producer must be a video too.
+         */
+        bool writeVideoWithAudio;
+
+        /**
          * Rendered heat maps saving folder.
          * In order to save the heatmaps, WrapperStructPose.heatMapTypes must also be filled.
          * If it is empty (default), it is disabled.
@@ -96,9 +112,11 @@ namespace op
         std::string writeHeatMapsFormat;
 
         /**
-         * Frame rate of the recorded video.
+         * Rendered 3D images saving video path.
+         * Please, use *.avi format.
+         * If it is empty (default), it is disabled.
          */
-        double writeVideoFps;
+        std::string writeVideo3D;
 
         /**
          * Rendered Adam images saving video path.
@@ -132,12 +150,14 @@ namespace op
         WrapperStructOutput(
             const double verbose = -1, const std::string& writeKeypoint = "",
             const DataFormat writeKeypointFormat = DataFormat::Xml, const std::string& writeJson = "",
-            const std::string& writeCocoJson = "", const std::string& writeCocoFootJson = "",
+            const std::string& writeCocoJson = "", const int writeCocoJsonVariants = 1,
             const int writeCocoJsonVariant = 1, const std::string& writeImages = "",
             const std::string& writeImagesFormat = "", const std::string& writeVideo = "",
-            const double writeVideoFps = 30., const std::string& writeHeatMaps = "",
-            const std::string& writeHeatMapsFormat = "", const std::string& writeVideoAdam = "",
-            const std::string& writeBvh = "", const std::string& udpHost = "", const std::string& udpPort = "");
+            const double writeVideoFps = -1., const bool writeVideoWithAudio = false,
+            const std::string& writeHeatMaps = "", const std::string& writeHeatMapsFormat = "",
+            const std::string& writeVideo3D = "", const std::string& writeVideoAdam = "",
+            const std::string& writeBvh = "", const std::string& udpHost = "",
+            const std::string& udpPort = "");
     };
 }
 

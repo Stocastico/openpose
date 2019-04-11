@@ -5,8 +5,10 @@
 
 namespace op
 {
-    VideoCaptureReader::VideoCaptureReader(const int index, const bool throwExceptionIfNoOpened) :
-        Producer{ProducerType::Webcam}
+    VideoCaptureReader::VideoCaptureReader(const int index, const bool throwExceptionIfNoOpened,
+                                           const std::string& cameraParameterPath, const bool undistortImage,
+                                           const int numberViews) :
+        Producer{ProducerType::Webcam, cameraParameterPath, undistortImage, numberViews}
     {
         try
         {
@@ -18,8 +20,10 @@ namespace op
         }
     }
 
-    VideoCaptureReader::VideoCaptureReader(const std::string& path, const ProducerType producerType) :
-        Producer{producerType},
+    VideoCaptureReader::VideoCaptureReader(const std::string& path, const ProducerType producerType,
+                                           const std::string& cameraParameterPath, const bool undistortImage,
+                                           const int numberViews) :
+        Producer{producerType, cameraParameterPath, undistortImage, numberViews},
         mVideoCapture{path}
     {
         try
@@ -47,7 +51,7 @@ namespace op
         }
         catch (const std::exception& e)
         {
-            error(e.what(), __LINE__, __FUNCTION__, __FILE__);
+            errorDestructor(e.what(), __LINE__, __FUNCTION__, __FILE__);
         }
     }
 
@@ -56,7 +60,7 @@ namespace op
         try
         {
             const auto stringLength = 12u;
-            return toFixedLengthString(   fastMax(0ll, longLongRound(get(CV_CAP_PROP_POS_FRAMES))),   stringLength);
+            return toFixedLengthString(   fastMax(0ull, uLongLongRound(get(CV_CAP_PROP_POS_FRAMES))),   stringLength);
         }
         catch (const std::exception& e)
         {
